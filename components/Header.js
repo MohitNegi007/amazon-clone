@@ -1,21 +1,66 @@
 import Image from "next/image";
+import React, { useState } from "react";
+
 import {
   MenuIcon,
   SearchIcon,
   ShoppingCartIcon,
+  UserIcon,
 } from "@heroicons/react/outline";
+import {
+  signInWithGoogle,
+  signInWithPopup,
+  GoogleAuthProvider,
+  signOut,
+} from "firebase/auth";
+import { auth } from "../firebase";
+import { onAuthStateChanged } from "firebase/auth";
+
 const Header = () => {
+  const [name, setName] = useState("Sign In");
+  const [imgUrl, setImgUrl] = useState("");
+
+  const [logOutButton, setLogOutButton] = useState(false);
+  const provider = new GoogleAuthProvider();
+  const signInWithGoogle = () => {
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        setName(result.user.displayName);
+        setImgUrl(result.user.photoURL);
+
+        onAuthStateChanged(auth, (user) => {
+          if (user) {
+            setLogOutButton(true);
+          } else {
+            return;
+          }
+        });
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
+  };
+  const signOutWithGoogle = () => {
+    signOut(auth);
+    setName("Sign In");
+    setImgUrl("/images/avatar.jpg");
+
+    setLogOutButton(false);
+  };
+
+  console.log(logOutButton);
   return (
     <header>
       {/* top nav */}
+
       <div className="flex  items-center bg-amazon_blue p-1 flex-grow py-2">
         <div className="mt-2 flex items-center flex-grow sm:flex-grow-0">
           <Image
             src="/images/amazonLogo.png"
             width={130}
             height={25}
-            objectFit="contain"
-            className="  cursor-pointer mx-3"
+            className=" cursor-pointer mx-3"
+            alt="img"
           />
         </div>
         {/* search */}
@@ -28,10 +73,29 @@ const Header = () => {
         </div>
         {/* right  */}
         <div className="text-white flex items-center text-xs mx-6 whitespace-nowrap">
-          <div className="link mx-2">
-            <p>Hello User</p>
+          <div
+            onClick={signInWithGoogle}
+            className="link  flex flex-col items-center mx-2"
+          >
+            {logOutButton ? (
+              <img
+                className="object-contain rounded-full mb-1"
+                src={imgUrl}
+                height={20}
+                width={20}
+              />
+            ) : (
+              <UserIcon className="h-5 text-white" />
+            )}
+            <p>{name} </p>
             <p className="font-extralight md:text-sm">Account & Lists</p>
           </div>
+
+          {logOutButton && (
+            <button onClick={signOutWithGoogle} className="m-2">
+              Sign Out
+            </button>
+          )}
           <div className="link  mx-2">
             <p>Returns</p>
             <p className="font-extralight md:text-sm">& Orders</p>
