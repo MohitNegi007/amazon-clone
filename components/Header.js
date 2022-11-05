@@ -1,12 +1,13 @@
 import Image from "next/image";
+import { useRouter } from "next/router";
 import React, { useState } from "react";
-
 import {
   MenuIcon,
   SearchIcon,
   ShoppingCartIcon,
   UserIcon,
 } from "@heroicons/react/outline";
+
 import {
   signInWithGoogle,
   signInWithPopup,
@@ -17,10 +18,10 @@ import { auth } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
 
 const Header = () => {
-  const [name, setName] = useState("Sign In");
+  const [name, setName] = useState("");
   const [imgUrl, setImgUrl] = useState("");
-
   const [logOutButton, setLogOutButton] = useState(false);
+  const router = useRouter();
   const provider = new GoogleAuthProvider();
   const signInWithGoogle = () => {
     signInWithPopup(auth, provider)
@@ -48,7 +49,6 @@ const Header = () => {
     setLogOutButton(false);
   };
 
-  console.log(logOutButton);
   return (
     <header>
       {/* top nav */}
@@ -61,6 +61,7 @@ const Header = () => {
             height={25}
             className=" cursor-pointer mx-3"
             alt="img"
+            onClick={() => router.push("/")}
           />
         </div>
         {/* search */}
@@ -73,10 +74,7 @@ const Header = () => {
         </div>
         {/* right  */}
         <div className="text-white flex items-center text-xs mx-6 whitespace-nowrap">
-          <div
-            onClick={signInWithGoogle}
-            className="link  flex flex-col items-center mx-2"
-          >
+          <div className="link  flex flex-col items-center mx-2">
             {logOutButton ? (
               <img
                 className="object-contain rounded-full mb-1"
@@ -87,7 +85,11 @@ const Header = () => {
             ) : (
               <UserIcon className="h-5 text-white" />
             )}
-            <p>{name} </p>
+            {logOutButton ? (
+              <p>{name} </p>
+            ) : (
+              <p onClick={signInWithGoogle}>Hello , Sign In</p>
+            )}
             <p className="font-extralight md:text-sm">Account & Lists</p>
           </div>
 
@@ -100,7 +102,10 @@ const Header = () => {
             <p>Returns</p>
             <p className="font-extralight md:text-sm">& Orders</p>
           </div>
-          <div className=" relative flex items-center  link  mx-2">
+          <div
+            onClick={() => router.push("/checkout")}
+            className=" relative flex items-center  link  mx-2"
+          >
             <span className="absolute top-0 right-0 md:right-10 h-4 w-4  bg-yellow-400 text-center rounded-full text-black font-bold ">
               0
             </span>
