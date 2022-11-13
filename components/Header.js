@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   MenuIcon,
   SearchIcon,
@@ -16,11 +16,18 @@ import {
 } from "firebase/auth";
 import { auth } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
+import { useSelector, useDispatch } from "react-redux";
+import { selectItems } from "../slices/basketSlice";
 
 const Header = () => {
   const [name, setName] = useState("");
   const [imgUrl, setImgUrl] = useState("");
-  const [logOutButton, setLogOutButton] = useState(false);
+  const [userLoggedIn, setUserLoggedIn] = useState(false);
+  const dispatch = useDispatch();
+  const items = useSelector(selectItems);
+  // same as above line but now logic/function here not in basketSlice
+  //state is glbal state , basket is reducer (that is defined in store) and items is array defined in basketSlice
+  // const items = useSelector((state) => state.basket.items);
   const router = useRouter();
   const provider = new GoogleAuthProvider();
   const signInWithGoogle = () => {
@@ -31,7 +38,8 @@ const Header = () => {
 
         onAuthStateChanged(auth, (user) => {
           if (user) {
-            setLogOutButton(true);
+            setUserLoggedIn(true);
+            console.log("state changed");
           } else {
             return;
           }
@@ -44,9 +52,8 @@ const Header = () => {
   const signOutWithGoogle = () => {
     signOut(auth);
     setName("Sign In");
-    setImgUrl("/images/avatar.jpg");
-
-    setLogOutButton(false);
+    setImgUrl(" ");
+    setUserLoggedIn(false);
   };
 
   return (
@@ -75,7 +82,7 @@ const Header = () => {
         {/* right  */}
         <div className="text-white flex items-center text-xs mx-6 whitespace-nowrap">
           <div className="link  flex flex-col items-center mx-2">
-            {logOutButton ? (
+            {userLoggedIn ? (
               <img
                 className="object-contain rounded-full mb-1"
                 src={imgUrl}
@@ -85,7 +92,7 @@ const Header = () => {
             ) : (
               <UserIcon className="h-5 text-white" />
             )}
-            {logOutButton ? (
+            {userLoggedIn ? (
               <p>{name} </p>
             ) : (
               <p onClick={signInWithGoogle}>Hello , Sign In</p>
@@ -93,7 +100,7 @@ const Header = () => {
             <p className="font-extralight md:text-sm">Account & Lists</p>
           </div>
 
-          {logOutButton && (
+          {userLoggedIn && (
             <button onClick={signOutWithGoogle} className="m-2">
               Sign Out
             </button>
@@ -107,7 +114,7 @@ const Header = () => {
             className=" relative flex items-center  link  mx-2"
           >
             <span className="absolute top-0 right-0 md:right-10 h-4 w-4  bg-yellow-400 text-center rounded-full text-black font-bold ">
-              0
+              {items.length}
             </span>
             <ShoppingCartIcon className="h-10" />
             <p className="hidden md:inline font-extralight md:text-sm mt-2 ">
