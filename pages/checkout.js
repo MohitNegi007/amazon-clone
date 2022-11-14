@@ -1,6 +1,7 @@
 import Image from "next/image";
 import React, { useEffect } from "react";
 import Header from "../components/Header";
+import Footer from "../components/Footer";
 import CheckoutProduct from "../components/CheckoutProduct";
 import { useSelector } from "react-redux";
 import Currency from "react-currency-formatter";
@@ -92,6 +93,7 @@ const Checkout = () => {
           )}
         </div>
       </main>
+      <Footer />
     </div>
   );
 };

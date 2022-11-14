@@ -60,7 +60,10 @@ const Header = () => {
     <header>
       {/* top nav */}
 
-      <div className="flex  items-center bg-amazon_blue p-1 flex-grow py-2">
+      <div
+        id="Header"
+        className="flex  items-center bg-amazon_blue p-1 flex-grow py-2"
+      >
         <div className="mt-2 flex items-center flex-grow sm:flex-grow-0">
           <Image
             src="/images/amazonLogo.png"
@@ -105,7 +108,7 @@ const Header = () => {
               Sign Out
             </button>
           )}
-          <div className="link  mx-2">
+          <div className="link mx-2">
             <p>Returns</p>
             <p className="font-extralight md:text-sm">& Orders</p>
           </div>

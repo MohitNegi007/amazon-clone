@@ -5,6 +5,7 @@ import Image from "next/image";
 import Header from "../components/Header";
 import Banner from "../components/Banner";
 import ProductFeed from "../components/ProductFeed";
+import Footer from "../components/Footer";
 
 const Home: NextPage = () => {
   const [products, setProducts] = useState([]);
@@ -27,6 +28,7 @@ const Home: NextPage = () => {
         <Banner />
         <ProductFeed products={products} />
       </main>
+      <Footer />
     </div>
   );
 };
